@@ -61,17 +61,28 @@ const Landing = () => {
     ];
 
     const handleDownload = async (platform) => {
+        const api_url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
+        console.log(`Starting download for ${platform} via ${api_url}/signe`);
+        
         try {
-            const api_url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
             const response = await fetch(`${api_url}/signe`);
+            
+            if (!response.ok) {
+                const errorBody = await response.text();
+                console.error(`Backend Error (${response.status}):`, errorBody);
+                throw new Error(`Server returned ${response.status}`);
+            }
+
             const data = await response.json();
             if (data.url) {
+                console.log("Signed URL received, redirecting...");
                 window.location.href = data.url;
             } else {
-                console.error("Failed to get signed URL");
+                console.error("Response missing URL field:", data);
             }
         } catch (error) {
-            console.error("Error during download:", error);
+            console.error("Critical error during /signe request:", error);
+            alert("Erreur lors de la génération du lien. Consultez la console.");
         }
     };
 
