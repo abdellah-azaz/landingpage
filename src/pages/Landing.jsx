@@ -60,6 +60,21 @@ const Landing = () => {
         }
     ];
 
+    const handleDownload = async (platform) => {
+        try {
+            const api_url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8081';
+            const response = await fetch(`${api_url}/signe`);
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                console.error("Failed to get signed URL");
+            }
+        } catch (error) {
+            console.error("Error during download:", error);
+        }
+    };
+
     return (
         <div className="landing-root">
             {/* Navigation */}
@@ -95,21 +110,21 @@ const Landing = () => {
                         </p>
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-wrap gap-4">
-                                <a 
-                                    href="/downloads/crypton-linux.zip" 
-                                    download 
+                                <button 
+                                    onClick={() => handleDownload('linux')}
                                     className="btn btn-primary flex gap-2"
                                 >
                                     <ShieldCheck className="w-5 h-5" />
                                     Télécharger (Linux)
-                                </a>
-                                <a 
-                                    href="#" 
+                                </button>
+                                <button 
+                                    disabled
                                     className="btn btn-outline flex gap-2 opacity-60 cursor-not-allowed"
                                 >
                                     <Monitor className="w-5 h-5" />
                                     Télécharger (Windows)
-                                </a>
+                                </button>
+
                                 <a href="#features" className="btn btn-outline flex gap-2 border-none">
                                     <Terminal className="w-4 h-4" />
                                     Détails de l'App
