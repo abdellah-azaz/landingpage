@@ -69,20 +69,24 @@ const Landing = () => {
             
             if (!response.ok) {
                 const errorBody = await response.text();
-                console.error(`Backend Error (${response.status}):`, errorBody);
-                throw new Error(`Server returned ${response.status}`);
+                console.group("Backend Error Detail");
+                console.error(`Status: ${response.status} (${response.statusText})`);
+                console.error(`Endpoint: ${api_url}/signe`);
+                console.error("Response Body:", errorBody);
+                console.groupEnd();
+                throw new Error(`Server Error: ${errorBody}`);
             }
 
             const data = await response.json();
             if (data.url) {
-                console.log("Signed URL received, redirecting...");
+                console.log("Signed URL received successfully.");
                 window.location.href = data.url;
             } else {
-                console.error("Response missing URL field:", data);
+                console.error("Invalid response format (missing 'url'):", data);
             }
         } catch (error) {
-            console.error("Critical error during /signe request:", error);
-            alert("Erreur lors de la génération du lien. Consultez la console.");
+            console.error("FULL ERROR CONTEXT:", error);
+            alert(`Erreur: ${error.message}`);
         }
     };
 
